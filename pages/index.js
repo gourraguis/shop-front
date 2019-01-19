@@ -1,2 +1,7 @@
+import Layout from '../components/Layout'
 
-export default () => <div>Hello world</div>
+export default () => (
+    <Layout>
+        <p>index content</p>
+    </Layout>
+)
