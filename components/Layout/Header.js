@@ -7,7 +7,8 @@ const Header = () => (
         </nav>
         <style jsx>{`
             div {
-                margin-top: 1rem
+                margin-top: 1rem;
+                margin-right: 1rem
             }
             nav {
                 display: flex;

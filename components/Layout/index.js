@@ -1,18 +1,16 @@
 import Header from './Header'
+import style from '../../styles/style.scss';
+import classnames from 'classnames'
 
 const Layout = ({ children }) => (
     <div>
+        <style dangerouslySetInnerHTML={{ __html: style }} /> {/* Loading Bulma framework */}
         <Header/>
-        <main>
-            {children}
+        <main className={classnames('section')}>
+            <div className={classnames('container')}>
+                {children}
+            </div>
         </main>
-        <style jsx>{`
-                main {
-                        max-width: 1080px;
-                        margin: 3rem auto
-                }
-        `}
-        </style>
     </div>
 )
 
