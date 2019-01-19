@@ -1,11 +1,11 @@
 import ShopCard from '../ShopCard'
 
-const ShopsGrid = () => (
+const ShopsGrid = ({shops}) => (
     <div className="columns is-multiline">
         {
-            [1, 2, 3, 4, 5].map(_ => (
+            shops.map(details => (
                 <div className="column is-3">
-                    <ShopCard/>
+                    <ShopCard details={details}/>
                 </div>
             ))
         }
