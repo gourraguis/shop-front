@@ -2,24 +2,39 @@ import React from 'react'
 import Layout from '../components/Layout'
 import ShopsGrid from '../components/ShopsGrid'
 import fetch from 'isomorphic-fetch'
+import cookie from 'js-cookie'
+import Router from 'next/router'
 
 class Index extends React.Component {
 
-    static async getInitialProps() {
+    state = {
+        shops: []
+    }
+
+    componentDidMount = async () => {
         const apiUrl = process.env.API_URL
-        const res = await fetch(apiUrl + 'shop')
+        const token = cookie.get('token')
+        if (!token) {
+            Router.push('/login')
+            return
+        }
+        const res = await fetch(apiUrl + 'shop', {
+            headers: {
+                authorization: token
+            }
+        })
+        console.log(res)
         if (res.status !== 200)
         {
             console.error(res.status + '===>' + res.statusText + '===>' + res.url)
-            return { shops: [] }
         }
-        return {
+        this.setState({
             shops: await res.json()
-        }
+        })
     }
 
     render() {
-        const { shops } = this.props
+        const { shops } = this.state
         return (
             <Layout>
                 <ShopsGrid shops={shops}/>

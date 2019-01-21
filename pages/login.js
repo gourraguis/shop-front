@@ -4,6 +4,8 @@ import Layout from '../components/Layout'
 import LoginForm from '../components/LoginForm'
 import SignupForm from '../components/SignupForm'
 import { login, signup } from '../utils/auth'
+import cookie from 'js-cookie'
+import Router from 'next/router'
 
 class Login extends React.Component {
 
@@ -16,6 +18,13 @@ class Login extends React.Component {
         newPassword: '',
         newPasswordConfirm: '',
         loading: false
+    }
+
+    componentDidMount() {
+        const token = cookie.get('token')
+        if (token) {
+            Router.push('/')
+        }
     }
 
     onChange = field => e => {
@@ -33,7 +42,8 @@ class Login extends React.Component {
     handleSubmit = form => async e => {
         e.preventDefault()
         this.setState({
-            loading: true
+            loading: true,
+            notificationMessage: ""
         })
         const { email, currentPassword, newPassword, newPasswordConfirm } = this.state
         try {
@@ -56,7 +66,9 @@ class Login extends React.Component {
                     password: ""
                 })
                 if (!error) {
-                    // redirect to home page
+                    setTimeout(() => {
+                        Router.push('/')
+                    }, 1500)
                 }
             }
         }

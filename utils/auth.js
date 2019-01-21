@@ -1,4 +1,5 @@
 import fetch from 'isomorphic-fetch'
+import cookie from 'js-cookie'
 
 export const login = async (email, password) => {
     const res = await fetch(process.env.API_URL + 'login', {
@@ -20,7 +21,7 @@ export const login = async (email, password) => {
         }
     } else {
         const { token } = await res.json()
-        console.log(token)
+        cookie.set('token', token)
         return {
             error: null,
             message: "Logged in, you will be redirected in a few seconds"
