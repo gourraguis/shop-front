@@ -3,10 +3,13 @@ import classnames from 'classnames'
 import Layout from '../components/Layout'
 import LoginForm from '../components/LoginForm'
 import SignupForm from '../components/SignupForm'
+import { login, signup } from '../utils/auth'
 
 class Login extends React.Component {
 
     state = {
+        notificationError: null,
+        notificationMessage: '',
         currentTab: 'login',
         email: '',
         currentPassword: '',
@@ -27,16 +30,49 @@ class Login extends React.Component {
         })
     }
 
-    handleSubmit = e => {
+    handleSubmit = form => async e => {
         e.preventDefault()
         this.setState({
             loading: true
         })
-        console.log(this.state)
+        const { email, currentPassword, newPassword, newPasswordConfirm } = this.state
+        try {
+            if (form === 'signup') {
+            const { error, message } = await signup(email, newPassword, newPasswordConfirm)
+            this.setState({
+                notificationError: error,
+                notificationMessage: message,
+                currentTab: error ? 'signup' : 'login', // we redirect to login there was no error
+                loading: false,
+                newPasswordConfirm: "",
+                newPassword: ""
+            })
+            } else if (form === 'login') {
+                const { error, message } = await login(email, currentPassword)
+                this.setState({
+                    notificationError: error,
+                    notificationMessage: message,
+                    loading: false,
+                    password: ""
+                })
+                if (!error) {
+                    // redirect to home page
+                }
+            }
+        }
+        catch (e) {
+            console.error(e.message)
+            this.setState({
+                notificationMessage: `Unknown error, please refresh and try again`,
+                notificationError: true,
+                loading: false
+            })
+        }
     }
 
     render() {
-        const {email, currentPassword, newPassword, newPasswordConfirm, loading, currentTab} = this.state
+        const {email, currentPassword, newPassword, newPasswordConfirm,
+            loading, currentTab, notificationError, notificationMessage} = this.state
         return (
             <Layout>
                 <div className="columns is-centered">
@@ -55,14 +91,19 @@ class Login extends React.Component {
                                 </li>
                             </ul>
                         </div>
+                        {notificationMessage && (
+                            <div className={classnames('notification', {'is-success': !notificationError, 'is-danger': notificationError})}>
+                            {notificationMessage}
+                            </div>
+                        )}
                         <div className="box">
                             {currentTab === 'login' && (
                                 <LoginForm email={email} currentPassword={currentPassword} loading={loading}
-                                       onChange={this.onChange} handleSubmit={this.handleSubmit}/>
+                                       onChange={this.onChange} handleSubmit={this.handleSubmit('login')}/>
                             )}
                             {currentTab === 'signup' && (
                                 <SignupForm email={email} newPassword={newPassword} newPasswordConfirm={newPasswordConfirm}
-                                        loading={loading} onChange={this.onChange} handleSubmit={this.handleSubmit}/>
+                                        loading={loading} onChange={this.onChange} handleSubmit={this.handleSubmit('signup')}/>
                             )}
                         </div>
                     </div>
